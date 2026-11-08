@@ -11,8 +11,8 @@ public class Hotel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false, nullable = false)
-    private UUID id_hotel;
+    @Column(name = "id_hotel", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 60)
     private String name;
@@ -29,8 +29,8 @@ public class Hotel {
 
     public Hotel() {}
 
-    public Hotel(UUID id_hotel, String name, String address, String phone, List<Room> rooms, List<Employee> employees) {
-        this.id_hotel = id_hotel;
+    public Hotel(UUID id, String name, String address, String phone, List<Room> rooms, List<Employee> employees) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
@@ -64,11 +64,11 @@ public class Hotel {
     }
 
     public UUID getId() {
-        return id_hotel;
+        return id;
     }
 
     public void setId(UUID id) {
-        this.id_hotel = id;
+        this.id = id;
     }
 
     public String getName() {

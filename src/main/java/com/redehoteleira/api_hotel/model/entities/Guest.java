@@ -13,7 +13,7 @@ public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_guest", updatable = false, nullable = false)
-    private UUID id_guest;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -37,7 +37,7 @@ public class Guest {
     }
 
     public Guest(UUID id_guest, String name, String cpf, String email, String phoneNumber, LocalDate birthDate) {
-        this.id_guest = id_guest;
+        this.id = id_guest;
         this.name = name;
         this.cpf = cpf;
         this.email = email;
@@ -45,13 +45,12 @@ public class Guest {
         this.birthDate = birthDate;
     }
 
-    // Getters e Setters
     public UUID getId_guest() {
-        return id_guest;
+        return id;
     }
 
     public void setId_guest(UUID id_guest) {
-        this.id_guest = id_guest;
+        this.id = id_guest;
     }
 
     public String getName() {

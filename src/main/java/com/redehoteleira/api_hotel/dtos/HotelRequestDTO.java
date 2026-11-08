@@ -14,7 +14,7 @@ public record HotelRequestDTO(
         String address,
 
         @NotBlank(message = "O telefone do hotel é obrigatório")
-        @Pattern(regexp = "^[0-9()+\\-\\s]{10,20}$", message = "Telefone inválido")
+        @Pattern(regexp = "^\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}$", message = "Telefone inválido.")
         String phone
 
 ) {

@@ -12,8 +12,8 @@ public abstract class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false, nullable = false)
-    private UUID id_room;
+    @Column(name = "id_room", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_hotel", nullable = false)
@@ -33,7 +33,7 @@ public abstract class Room {
     public Room() {}
 
     public Room(UUID id_room, Hotel hotel, String number, Integer capacity, Double dailyRate, RoomStatus status) {
-        this.id_room = id_room;
+        this.id = id_room;
         this.hotel = hotel;
         this.number = number;
         this.capacity = capacity;
@@ -51,20 +51,20 @@ public abstract class Room {
         return this.status == RoomStatus.AVAILABLE;
     }
 
-    public UUID getId_room() {
-        return id_room;
-    }
-
-    public void setId_room(UUID id_room) {
-        this.id_room = id_room;
-    }
-
     public Hotel getHotel() {
         return hotel;
     }
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
+    }
+
+    public UUID getId_room() {
+        return id;
+    }
+
+    public void setId_room(UUID id_room) {
+        this.id = id_room;
     }
 
     public String getNumber() {

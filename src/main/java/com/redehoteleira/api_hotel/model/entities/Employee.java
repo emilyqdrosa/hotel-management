@@ -12,7 +12,7 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_employee", updatable = false, nullable = false)
-    private UUID id_employee;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_hotel", nullable = false)
@@ -41,7 +41,7 @@ public class Employee {
     }
 
     public Employee(UUID id_employee, Hotel hotel, String name, String cpf, Double salary, LocalDate hireDate, WorkShift workShift) {
-        this.id_employee = id_employee;
+        this.id = id_employee;
         this.hotel = hotel;
         this.name = name;
         this.cpf = cpf;
@@ -63,13 +63,12 @@ public class Employee {
         this.isOnVacation = false;
     }
 
-    // Getters e Setters
     public UUID getId_employee() {
-        return id_employee;
+        return id;
     }
 
     public void setId_employee(UUID id_employee) {
-        this.id_employee = id_employee;
+        this.id = id_employee;
     }
 
     public Hotel getHotel() {

@@ -11,7 +11,7 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_service", updatable = false, nullable = false)
-    private UUID id_service;
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_type", nullable = false)
@@ -27,18 +27,18 @@ public class Service {
     }
 
     public Service(UUID id_service, ServiceType type, String customName) {
-        this.id_service = id_service;
+        this.id = id_service;
         this.type = type;
         this.name = customName != null ? customName : type.name();
         this.price = type.getDefaultPrice();
     }
 
     public UUID getId_service() {
-        return id_service;
+        return id;
     }
 
     public void setId_service(UUID id_service) {
-        this.id_service = id_service;
+        this.id = id_service;
     }
 
     public ServiceType getType() {

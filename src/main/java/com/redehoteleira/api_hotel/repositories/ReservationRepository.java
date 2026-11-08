@@ -12,8 +12,9 @@ import java.util.UUID;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, UUID> {
 
-    @Query("SELECT COUNT(r) > 0 FROM Reservation r WHERE r.room.id_room = :roomId " +
-            "AND r.status NOT IN ('CANCELED', 'COMPLETED') " +
+    @Query("SELECT COUNT(r) > 0 FROM Reservation r WHERE r.room.id = :roomId " +
+            "AND r.status NOT IN (com.redehoteleira.api_hotel.model.enums.ReservationStatus.CANCELED, " +
+            "com.redehoteleira.api_hotel.model.enums.ReservationStatus.COMPLETED) " +
             "AND r.checkInDate < :checkOutDate AND r.checkOutDate > :checkInDate")
     boolean existsConflictingReservation(@Param("roomId") UUID roomId,
                                          @Param("checkInDate") LocalDate checkInDate,

@@ -12,8 +12,7 @@ public class ApiHotelApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(ApiHotelApplication.class)
-				.headless(false)
-				.run(args);
+				.headless(false).run(args);
 
 		SwingUtilities.invokeLater(() -> context.getBean(MainFrame.class).setVisible(true));
 	}
