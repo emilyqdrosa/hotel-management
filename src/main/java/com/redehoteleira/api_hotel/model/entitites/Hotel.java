@@ -14,8 +14,10 @@ public class Hotel {
     @Column(updatable = false, nullable = false)
     private UUID id_hotel;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 60)
     private String name;
+
+    @Column(nullable = false)
     private String address;
     private String phone;
 

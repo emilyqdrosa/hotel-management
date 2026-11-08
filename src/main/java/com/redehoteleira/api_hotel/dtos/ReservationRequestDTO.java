@@ -1,6 +1,7 @@
 package com.redehoteleira.api_hotel.dtos;
 
 import com.redehoteleira.api_hotel.model.enums.ReservationStatus;
+import com.redehoteleira.api_hotel.model.enums.ServiceType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.FutureOrPresent;
 
@@ -26,5 +27,5 @@ public record ReservationRequestDTO(
         @NotNull(message = "O status da reserva é obrigatório.")
         ReservationStatus status,
 
-        List<UUID> consumedServiceIds
+        List<ServiceType> consumedServices
 ) {}

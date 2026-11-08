@@ -33,7 +33,6 @@ public class Service {
         this.price = type.getDefaultPrice();
     }
 
-    // Getters e Setters
     public UUID getId_service() {
         return id_service;
     }

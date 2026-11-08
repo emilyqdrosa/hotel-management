@@ -2,6 +2,7 @@ package com.redehoteleira.api_hotel.dtos;
 
 import com.redehoteleira.api_hotel.model.enums.ServiceType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record ServiceRequestDTO(
@@ -9,7 +10,10 @@ public record ServiceRequestDTO(
         ServiceType type,
 
         @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres.")
-        String name
+        String name,
+
+        @Positive(message = "O preço deve ser maior que zero.")
+        Double price
 
 ) {
 }

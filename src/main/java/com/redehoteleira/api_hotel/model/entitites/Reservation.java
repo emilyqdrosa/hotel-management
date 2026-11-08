@@ -2,6 +2,7 @@ package com.redehoteleira.api_hotel.model.entitites;
 
 import com.redehoteleira.api_hotel.model.enums.ReservationStatus;
 import com.redehoteleira.api_hotel.model.enums.RoomStatus;
+import com.redehoteleira.api_hotel.model.enums.ServiceType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -40,13 +41,15 @@ public class Reservation {
     @Column(nullable = false)
     private ReservationStatus status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
+    // Coleção de Enums substituindo a Entidade Service
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
             name = "reservation_services",
-            joinColumns = @JoinColumn(name = "id_reservation"),
-            inverseJoinColumns = @JoinColumn(name = "id_service")
+            joinColumns = @JoinColumn(name = "id_reservation")
     )
-    private List<Service> consumedServices = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "service_type")
+    private List<ServiceType> consumedServices = new ArrayList<>();
 
     public Reservation() { }
 
@@ -60,17 +63,6 @@ public class Reservation {
         this.status = status;
     }
 
-    public Reservation(UUID id_reservation, Guest guest, Room room, LocalDate checkInDate, LocalDate checkOutDate, Double totalValue, ReservationStatus status, List<Service> consumedServices) {
-        this.id_reservation = id_reservation;
-        this.guest = guest;
-        this.room = room;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
-        this.totalValue = totalValue;
-        this.status = status;
-        this.consumedServices = consumedServices != null ? consumedServices : new ArrayList<>();
-    }
-
     public void calculateTotalValue() {
         if (this.checkInDate != null && this.checkOutDate != null && this.room != null) {
             int days = Math.toIntExact(ChronoUnit.DAYS.between(this.checkInDate, this.checkOutDate));
@@ -82,8 +74,8 @@ public class Reservation {
 
             Double servicesTotal = 0.0;
             if (this.consumedServices != null) {
-                for (Service service : consumedServices) {
-                    servicesTotal += service.getPrice();
+                for (ServiceType service : consumedServices) {
+                    servicesTotal += service.getDefaultPrice();
                 }
             }
 
@@ -91,7 +83,7 @@ public class Reservation {
         }
     }
 
-    public void addService(Service service) {
+    public void addService(ServiceType service) {
         this.consumedServices.add(service);
         this.calculateTotalValue();
     }
@@ -120,67 +112,27 @@ public class Reservation {
         }
     }
 
-    public UUID getId_reservation() {
-        return id_reservation;
-    }
+    public UUID getId_reservation() { return id_reservation; }
+    public void setId_reservation(UUID id_reservation) { this.id_reservation = id_reservation; }
 
-    public void setId_reservation(UUID id_reservation) {
-        this.id_reservation = id_reservation;
-    }
+    public Guest getGuest() { return guest; }
+    public void setGuest(Guest guest) { this.guest = guest; }
 
-    public Guest getGuest() {
-        return guest;
-    }
+    public Room getRoom() { return room; }
+    public void setRoom(Room room) { this.room = room; }
 
-    public void setGuest(Guest guest) {
-        this.guest = guest;
-    }
+    public LocalDate getCheckInDate() { return checkInDate; }
+    public void setCheckInDate(LocalDate checkInDate) { this.checkInDate = checkInDate; }
 
-    public Room getRoom() {
-        return room;
-    }
+    public LocalDate getCheckOutDate() { return checkOutDate; }
+    public void setCheckOutDate(LocalDate checkOutDate) { this.checkOutDate = checkOutDate; }
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
+    public Double getTotalValue() { return totalValue; }
+    public void setTotalValue(Double totalValue) { this.totalValue = totalValue; }
 
-    public LocalDate getCheckInDate() {
-        return checkInDate;
-    }
+    public ReservationStatus getStatus() { return status; }
+    public void setStatus(ReservationStatus status) { this.status = status; }
 
-    public void setCheckInDate(LocalDate checkInDate) {
-        this.checkInDate = checkInDate;
-    }
-
-    public LocalDate getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(LocalDate checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
-    public Double getTotalValue() {
-        return totalValue;
-    }
-
-    public void setTotalValue(Double totalValue) {
-        this.totalValue = totalValue;
-    }
-
-    public ReservationStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ReservationStatus status) {
-        this.status = status;
-    }
-
-    public List<Service> getConsumedServices() {
-        return consumedServices;
-    }
-
-    public void setConsumedServices(List<Service> consumedServices) {
-        this.consumedServices = consumedServices;
-    }
+    public List<ServiceType> getConsumedServices() { return consumedServices; }
+    public void setConsumedServices(List<ServiceType> consumedServices) { this.consumedServices = consumedServices; }
 }
