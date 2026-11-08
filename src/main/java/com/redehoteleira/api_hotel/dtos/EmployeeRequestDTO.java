@@ -34,6 +34,7 @@ public record EmployeeRequestDTO(
         @PastOrPresent(message = "A data de contratação não pode ser futura.")
         LocalDate hireDate,
 
+        @NotNull(message = "O turno de trabalho é obrigatório.")
         UUID id_work_shift
 
 ) {

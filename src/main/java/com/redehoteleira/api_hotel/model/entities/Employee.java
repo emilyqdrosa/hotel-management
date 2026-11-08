@@ -31,7 +31,7 @@ public class Employee {
     private LocalDate hireDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_work_shift")
+    @JoinColumn(name = "id_work_shift", nullable = false)
     private WorkShift workShift;
 
     @Column(name = "is_on_vacation", nullable = false)

@@ -9,9 +9,11 @@ import com.redehoteleira.api_hotel.model.entities.Employee;
 import com.redehoteleira.api_hotel.model.entities.Hotel;
 import com.redehoteleira.api_hotel.model.entities.Manager;
 import com.redehoteleira.api_hotel.model.entities.Receptionist;
+import com.redehoteleira.api_hotel.model.entities.WorkShift;
 import com.redehoteleira.api_hotel.model.enums.SystemAccessLevel;
 import com.redehoteleira.api_hotel.services.EmployeeService;
 import com.redehoteleira.api_hotel.services.HotelService;
+import com.redehoteleira.api_hotel.services.WorkShiftService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
@@ -36,6 +38,7 @@ public class EmployeeView extends JPanel {
     private static final Locale PT_BR = Locale.forLanguageTag("pt-BR");
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     private static final int TYPE_EMPLOYEE = 0;
     private static final int TYPE_RECEPTIONIST = 1;
@@ -49,8 +52,16 @@ public class EmployeeView extends JPanel {
         }
     }
 
+    private record WorkShiftItem(UUID id, String label) {
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
     private final EmployeeService employeeService;
     private final HotelService hotelService;
+    private final WorkShiftService workShiftService;
     private final Validator validator;
 
     // Formulário
@@ -61,6 +72,7 @@ public class EmployeeView extends JPanel {
     private final JTextField txtCpf = new JTextField(20);
     private final JTextField txtSalary = new JTextField(20);
     private final JTextField txtHireDate = new JTextField(20);
+    private final JComboBox<WorkShiftItem> cbWorkShift = new JComboBox<>();
     private final JTextField txtLanguages = new JTextField(20);
     private final JTextField txtDepartment = new JTextField(20);
     private final JComboBox<SystemAccessLevel> cbAccessLevel = new JComboBox<>(SystemAccessLevel.values());
@@ -68,10 +80,13 @@ public class EmployeeView extends JPanel {
     private final JPanel extraPanel = new JPanel(extraLayout);
     private final JPanel formPanel = new JPanel(new GridBagLayout());
 
+    // Filtro
     private final JComboBox<HotelItem> cbFilterHotel = new JComboBox<>();
 
+    // Tabela
     private final DefaultTableModel tableModel = new DefaultTableModel(
-            new Object[]{"ID", "Hotel", "Nome", "CPF", "Cargo", "Salário", "Contratação", "Bônus", "Férias", "Extra"}, 0) {
+            new Object[]{"ID", "Hotel", "Nome", "CPF", "Cargo", "Salário", "Contratação",
+                    "Bônus", "Férias", "Extra", "Turno"}, 0) {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -83,9 +98,11 @@ public class EmployeeView extends JPanel {
     private UUID selectedId = null;
     private boolean loading = false;
 
-    public EmployeeView(EmployeeService employeeService, HotelService hotelService, Validator validator) {
+    public EmployeeView(EmployeeService employeeService, HotelService hotelService,
+                        WorkShiftService workShiftService, Validator validator) {
         this.employeeService = employeeService;
         this.hotelService = hotelService;
+        this.workShiftService = workShiftService;
         this.validator = validator;
 
         buildUI();
@@ -96,6 +113,7 @@ public class EmployeeView extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        // ---------- Painel de campos extras (por cargo) ----------
         extraPanel.add(new JPanel(), "NONE");
         extraPanel.add(labeled("Idiomas:", txtLanguages), "REC");
         extraPanel.add(labeled("Departamento:", txtDepartment), "MGR");
@@ -114,6 +132,7 @@ public class EmployeeView extends JPanel {
         });
         cbType.addActionListener(e -> updateExtraFields());
 
+        // ---------- Formulário ----------
         updateFormTitle();
         addRow("Hotel:", cbHotel, 0);
         addRow("Cargo:", cbType, 1);
@@ -121,7 +140,8 @@ public class EmployeeView extends JPanel {
         addRow("CPF:", txtCpf, 3);
         addRow("Salário (R$):", txtSalary, 4);
         addRow("Contratação (dd/mm/aaaa):", txtHireDate, 5);
-        addRow("", extraPanel, 6);
+        addRow("Turno (obrigatório):", cbWorkShift, 6);
+        addRow("", extraPanel, 7);
 
         JButton btnSave = new JButton("Salvar");
         JButton btnDelete = new JButton("Excluir");
@@ -141,10 +161,11 @@ public class EmployeeView extends JPanel {
         buttons.add(btnClear);
         buttons.add(btnStartVacation);
         buttons.add(btnEndVacation);
-        addRow("", buttons, 7);
+        addRow("", buttons, 8);
 
         updateExtraFields();
 
+        // ---------- Filtro ----------
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterPanel.add(new JLabel("Filtrar por hotel:"));
         filterPanel.add(cbFilterHotel);
@@ -152,6 +173,7 @@ public class EmployeeView extends JPanel {
             if (!loading) loadEmployees();
         });
 
+        // ---------- Tabela ----------
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.removeColumn(table.getColumnModel().getColumn(0)); // esconde ID
@@ -188,12 +210,15 @@ public class EmployeeView extends JPanel {
         formPanel.add(component, gbc);
     }
 
+    // ---------- Carregamento ----------
+
     public void refresh() {
         loading = true;
         try {
             loadHotels();
+            loadWorkShifts();
         } catch (Exception ex) {
-            showError("Erro ao carregar hotéis: " + ex.getMessage());
+            showError("Erro ao carregar dados: " + ex.getMessage());
         } finally {
             loading = false;
         }
@@ -223,6 +248,19 @@ public class EmployeeView extends JPanel {
         if (previousFilter != null) selectHotel(cbFilterHotel, previousFilter.id());
     }
 
+    private void loadWorkShifts() {
+        WorkShiftItem previous = (WorkShiftItem) cbWorkShift.getSelectedItem();
+
+        DefaultComboBoxModel<WorkShiftItem> model = new DefaultComboBoxModel<>();
+        for (WorkShift ws : workShiftService.getAllWorkShifts()) {
+            model.addElement(new WorkShiftItem(ws.getId_work_shift(), shiftLabel(ws)));
+        }
+        cbWorkShift.setModel(model);
+        cbWorkShift.setSelectedIndex(-1); // nenhum turno escolhido: o usuário precisa selecionar
+
+        if (previous != null) selectWorkShift(previous.id());
+    }
+
     private void loadEmployees() {
         try {
             HotelItem filter = (HotelItem) cbFilterHotel.getSelectedItem();
@@ -245,13 +283,16 @@ public class EmployeeView extends JPanel {
                         e.getHireDate().format(DATE_FORMAT),
                         money(e.calculateBonus()), // polimorfismo: cada cargo calcula o seu bônus
                         Boolean.TRUE.equals(e.getIsOnVacation()) ? "Sim" : "Não",
-                        extraLabel(e)
+                        extraLabel(e),
+                        e.getWorkShift() == null ? "Sem turno" : shiftLabel(e.getWorkShift())
                 });
             }
         } catch (Exception ex) {
             showError("Erro ao carregar funcionários: " + ex.getMessage());
         }
     }
+
+    // ---------- Ações ----------
 
     private void save() {
         HotelItem hotel = (HotelItem) cbHotel.getSelectedItem();
@@ -273,15 +314,16 @@ public class EmployeeView extends JPanel {
         String name = txtName.getText().trim();
         String cpf = txtCpf.getText().trim();
         int type = cbType.getSelectedIndex();
+        UUID workShiftId = selectedWorkShiftId();
 
         Object dto = switch (type) {
-            case TYPE_RECEPTIONIST -> new ReceptionistRequestDTO(hotelId, name, cpf, salary, hireDate, null,
+            case TYPE_RECEPTIONIST -> new ReceptionistRequestDTO(hotelId, name, cpf, salary, hireDate, workShiftId,
                     emptyToNull(txtLanguages.getText()));
-            case TYPE_MANAGER -> new ManagerRequestDTO(hotelId, name, cpf, salary, hireDate, null,
+            case TYPE_MANAGER -> new ManagerRequestDTO(hotelId, name, cpf, salary, hireDate, workShiftId,
                     emptyToNull(txtDepartment.getText()));
-            case TYPE_ADMINISTRATOR -> new AdministratorRequestDTO(hotelId, name, cpf, salary, hireDate, null,
+            case TYPE_ADMINISTRATOR -> new AdministratorRequestDTO(hotelId, name, cpf, salary, hireDate, workShiftId,
                     (SystemAccessLevel) cbAccessLevel.getSelectedItem());
-            default -> new EmployeeRequestDTO(hotelId, name, cpf, salary, hireDate, null);
+            default -> new EmployeeRequestDTO(hotelId, name, cpf, salary, hireDate, workShiftId);
         };
 
         String validationError = validate(dto);
@@ -373,6 +415,7 @@ public class EmployeeView extends JPanel {
         txtLanguages.setText("");
         txtDepartment.setText("");
         cbAccessLevel.setSelectedIndex(0);
+        cbWorkShift.setSelectedIndex(-1);
         cbType.setSelectedIndex(0);
         cbType.setEnabled(true);
         table.clearSelection();
@@ -394,6 +437,7 @@ public class EmployeeView extends JPanel {
 
         selectedId = id;
         selectHotel(cbHotel, employee.getHotel().getId());
+        selectWorkShift(employee.getWorkShift() == null ? null : employee.getWorkShift().getId_work_shift());
         txtName.setText(employee.getName());
         txtCpf.setText(employee.getCpf());
         txtSalary.setText(String.valueOf(employee.getSalary()));
@@ -416,10 +460,12 @@ public class EmployeeView extends JPanel {
             cbType.setSelectedIndex(TYPE_EMPLOYEE);
         }
 
-        cbType.setEnabled(false);
+        cbType.setEnabled(false); // o cargo não pode ser alterado na edição
         updateExtraFields();
         updateFormTitle();
     }
+
+    // ---------- Utilitários ----------
 
     private void selectHotel(JComboBox<HotelItem> combo, UUID id) {
         ComboBoxModel<HotelItem> model = combo.getModel();
@@ -429,6 +475,28 @@ public class EmployeeView extends JPanel {
                 return;
             }
         }
+    }
+
+    // Se o funcionário não tiver turno (cadastro antigo), deixa o combo vazio para forçar a escolha
+    private void selectWorkShift(UUID id) {
+        ComboBoxModel<WorkShiftItem> model = cbWorkShift.getModel();
+        for (int i = 0; i < model.getSize(); i++) {
+            if (Objects.equals(model.getElementAt(i).id(), id)) {
+                cbWorkShift.setSelectedIndex(i);
+                return;
+            }
+        }
+        cbWorkShift.setSelectedIndex(-1);
+    }
+
+    private UUID selectedWorkShiftId() {
+        WorkShiftItem item = (WorkShiftItem) cbWorkShift.getSelectedItem();
+        return item == null ? null : item.id();
+    }
+
+    private static String shiftLabel(WorkShift ws) {
+        return ws.getDescription() + " (" + ws.getStartTime().format(TIME_FORMAT)
+                + " - " + ws.getEndTime().format(TIME_FORMAT) + ")";
     }
 
     private void updateExtraFields() {
