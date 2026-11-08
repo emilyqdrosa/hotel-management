@@ -168,9 +168,7 @@ public class EmployeeService {
     }
 
     private WorkShift getWorkShift(UUID workShiftId) {
-        if (workShiftId == null) {
-            throw new IllegalArgumentException("O turno de trabalho é obrigatório.");
-        }
+        if (workShiftId == null) return null;
         return workShiftRepository.findById(workShiftId)
                 .orElseThrow(() -> new IllegalArgumentException("Turno de trabalho não encontrado."));
     }

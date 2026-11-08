@@ -132,7 +132,6 @@ public class EmployeeView extends JPanel {
         });
         cbType.addActionListener(e -> updateExtraFields());
 
-        // ---------- Formulário ----------
         updateFormTitle();
         addRow("Hotel:", cbHotel, 0);
         addRow("Cargo:", cbType, 1);
@@ -140,7 +139,7 @@ public class EmployeeView extends JPanel {
         addRow("CPF:", txtCpf, 3);
         addRow("Salário (R$):", txtSalary, 4);
         addRow("Contratação (dd/mm/aaaa):", txtHireDate, 5);
-        addRow("Turno (obrigatório):", cbWorkShift, 6);
+        addRow("Turno:", cbWorkShift, 6);
         addRow("", extraPanel, 7);
 
         JButton btnSave = new JButton("Salvar");
@@ -165,7 +164,6 @@ public class EmployeeView extends JPanel {
 
         updateExtraFields();
 
-        // ---------- Filtro ----------
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterPanel.add(new JLabel("Filtrar por hotel:"));
         filterPanel.add(cbFilterHotel);
@@ -173,7 +171,6 @@ public class EmployeeView extends JPanel {
             if (!loading) loadEmployees();
         });
 
-        // ---------- Tabela ----------
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.removeColumn(table.getColumnModel().getColumn(0)); // esconde ID
@@ -252,11 +249,12 @@ public class EmployeeView extends JPanel {
         WorkShiftItem previous = (WorkShiftItem) cbWorkShift.getSelectedItem();
 
         DefaultComboBoxModel<WorkShiftItem> model = new DefaultComboBoxModel<>();
+        model.addElement(new WorkShiftItem(null, "Não definido"));
         for (WorkShift ws : workShiftService.getAllWorkShifts()) {
             model.addElement(new WorkShiftItem(ws.getId_work_shift(), shiftLabel(ws)));
         }
         cbWorkShift.setModel(model);
-        cbWorkShift.setSelectedIndex(-1); // nenhum turno escolhido: o usuário precisa selecionar
+        cbWorkShift.setSelectedIndex(0);
 
         if (previous != null) selectWorkShift(previous.id());
     }
@@ -281,10 +279,10 @@ public class EmployeeView extends JPanel {
                         typeLabel(e),
                         money(e.getSalary()),
                         e.getHireDate().format(DATE_FORMAT),
-                        money(e.calculateBonus()), // polimorfismo: cada cargo calcula o seu bônus
+                        money(e.calculateBonus()),
                         Boolean.TRUE.equals(e.getIsOnVacation()) ? "Sim" : "Não",
                         extraLabel(e),
-                        e.getWorkShift() == null ? "Sem turno" : shiftLabel(e.getWorkShift())
+                        e.getWorkShift() == null ? "Não definido" : shiftLabel(e.getWorkShift())
                 });
             }
         } catch (Exception ex) {
@@ -415,7 +413,7 @@ public class EmployeeView extends JPanel {
         txtLanguages.setText("");
         txtDepartment.setText("");
         cbAccessLevel.setSelectedIndex(0);
-        cbWorkShift.setSelectedIndex(-1);
+        cbWorkShift.setSelectedIndex(0);
         cbType.setSelectedIndex(0);
         cbType.setEnabled(true);
         table.clearSelection();
@@ -477,7 +475,6 @@ public class EmployeeView extends JPanel {
         }
     }
 
-    // Se o funcionário não tiver turno (cadastro antigo), deixa o combo vazio para forçar a escolha
     private void selectWorkShift(UUID id) {
         ComboBoxModel<WorkShiftItem> model = cbWorkShift.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -486,7 +483,7 @@ public class EmployeeView extends JPanel {
                 return;
             }
         }
-        cbWorkShift.setSelectedIndex(-1);
+        cbWorkShift.setSelectedIndex(0);
     }
 
     private UUID selectedWorkShiftId() {
