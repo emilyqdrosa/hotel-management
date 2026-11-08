@@ -1,4 +1,4 @@
-package com.redehoteleira.api_hotel.model.entitites;
+package com.redehoteleira.api_hotel.model.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalTime;

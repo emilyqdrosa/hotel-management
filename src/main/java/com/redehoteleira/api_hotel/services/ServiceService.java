@@ -1,7 +1,7 @@
 package com.redehoteleira.api_hotel.services;
 
 import com.redehoteleira.api_hotel.dtos.ServiceRequestDTO;
-import com.redehoteleira.api_hotel.model.entitites.Service;
+import com.redehoteleira.api_hotel.model.entities.Service;
 import com.redehoteleira.api_hotel.repositories.ServiceRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +24,9 @@ public class ServiceService {
         }
 
         Service service = new Service(null, data.type(), data.name());
+        if (data.price() != null) {
+            service.setPrice(data.price());
+        }
 
         return serviceRepository.save(service);
     }

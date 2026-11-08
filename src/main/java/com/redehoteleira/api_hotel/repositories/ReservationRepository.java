@@ -1,6 +1,6 @@
 package com.redehoteleira.api_hotel.repositories;
 
-import com.redehoteleira.api_hotel.model.entitites.Reservation;
+import com.redehoteleira.api_hotel.model.entities.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

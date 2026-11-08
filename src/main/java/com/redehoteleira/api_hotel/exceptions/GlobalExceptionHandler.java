@@ -11,23 +11,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException exception) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", exception.getMessage()));
-  }
-
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException exception) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", exception.getMessage()));
-  }
-
   @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException exception) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", exception.getMessage()));
+  public ResponseEntity<Map<String, String>> handleIllegalArgument(
+          IllegalArgumentException exception) {
+
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("erro", exception.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException exception) {
+  public ResponseEntity<Map<String, String>> handleValidationErrors(
+          MethodArgumentNotValidException exception) {
 
     String message = exception.getBindingResult()
             .getFieldErrors()
@@ -36,6 +31,17 @@ public class GlobalExceptionHandler {
             .findFirst()
             .orElse("Dados inválidos.");
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", message));
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("erro", message));
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<Map<String, String>> handleIllegalState(
+          IllegalStateException exception) {
+
+    return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of("erro", exception.getMessage()));
   }
 }

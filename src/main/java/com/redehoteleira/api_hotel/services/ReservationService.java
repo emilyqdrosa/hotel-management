@@ -1,9 +1,9 @@
 package com.redehoteleira.api_hotel.services;
 
 import com.redehoteleira.api_hotel.dtos.ReservationRequestDTO;
-import com.redehoteleira.api_hotel.model.entitites.Guest;
-import com.redehoteleira.api_hotel.model.entitites.Reservation;
-import com.redehoteleira.api_hotel.model.entitites.Room;
+import com.redehoteleira.api_hotel.model.entities.Guest;
+import com.redehoteleira.api_hotel.model.entities.Reservation;
+import com.redehoteleira.api_hotel.model.entities.Room;
 import com.redehoteleira.api_hotel.model.enums.ServiceType;
 import com.redehoteleira.api_hotel.repositories.GuestRepository;
 import com.redehoteleira.api_hotel.repositories.ReservationRepository;
@@ -29,6 +29,10 @@ public class ReservationService {
 
     @Transactional
     public Reservation createReservation(ReservationRequestDTO data) {
+        if (data.checkInDate().isBefore(java.time.LocalDate.now())) {
+            throw new IllegalArgumentException("A data de check-in não pode ser passada.");
+        }
+
         if (data.checkInDate().isAfter(data.checkOutDate()) || data.checkInDate().isEqual(data.checkOutDate())) {
             throw new IllegalArgumentException("A data de check-out deve ser posterior à data de check-in.");
         }

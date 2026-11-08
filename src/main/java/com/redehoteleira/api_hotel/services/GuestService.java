@@ -1,7 +1,7 @@
 package com.redehoteleira.api_hotel.services;
 
 import com.redehoteleira.api_hotel.dtos.GuestRequestDTO;
-import com.redehoteleira.api_hotel.model.entitites.Guest;
+import com.redehoteleira.api_hotel.model.entities.Guest;
 import com.redehoteleira.api_hotel.repositories.GuestRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

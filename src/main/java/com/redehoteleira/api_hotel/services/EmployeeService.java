@@ -1,7 +1,7 @@
 package com.redehoteleira.api_hotel.services;
 
 import com.redehoteleira.api_hotel.dtos.*;
-import com.redehoteleira.api_hotel.model.entitites.*;
+import com.redehoteleira.api_hotel.model.entities.*;
 import com.redehoteleira.api_hotel.repositories.EmployeeRepository;
 import com.redehoteleira.api_hotel.repositories.HotelRepository;
 import com.redehoteleira.api_hotel.repositories.WorkShiftRepository;

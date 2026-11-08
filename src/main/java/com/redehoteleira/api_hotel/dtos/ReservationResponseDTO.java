@@ -1,6 +1,7 @@
 package com.redehoteleira.api_hotel.dtos;
 
 import com.redehoteleira.api_hotel.model.enums.ReservationStatus;
+import com.redehoteleira.api_hotel.model.enums.ServiceType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,6 @@ public record ReservationResponseDTO(
         LocalDate checkOutDate,
         Double totalValue,
         ReservationStatus status,
-        List<UUID> consumedServiceIds
+        List<ServiceType> consumedServices
 ) {
 }

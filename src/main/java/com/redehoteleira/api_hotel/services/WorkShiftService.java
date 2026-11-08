@@ -1,7 +1,7 @@
 package com.redehoteleira.api_hotel.services;
 
 import com.redehoteleira.api_hotel.dtos.WorkShiftRequestDTO;
-import com.redehoteleira.api_hotel.model.entitites.WorkShift;
+import com.redehoteleira.api_hotel.model.entities.WorkShift;
 import com.redehoteleira.api_hotel.repositories.WorkShiftRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,7 @@
 package com.redehoteleira.api_hotel.repositories;
 
-import com.redehoteleira.api_hotel.model.entitites.Hotel;
-import com.redehoteleira.api_hotel.model.entitites.Room;
+import com.redehoteleira.api_hotel.model.entities.Hotel;
+import com.redehoteleira.api_hotel.model.entities.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
