@@ -1,10 +1,12 @@
 package com.redehoteleira.api_hotel.views;
 
+import org.springframework.stereotype.Component;
+
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@org.springframework.stereotype.Component
+@Component
 public class MainFrame extends JFrame {
 
     public MainFrame(HotelView hotelView,
@@ -12,8 +14,7 @@ public class MainFrame extends JFrame {
                      EmployeeView employeeView,
                      WorkShiftView workShiftView,
                      GuestView guestView,
-                     ReservationView reservationView,
-                     ServiceView serviceView) {
+                     ReservationView reservationView) {
 
         setTitle("Rede Hoteleira");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,8 +28,8 @@ public class MainFrame extends JFrame {
         tabs.addTab("Turnos", workShiftView);
         tabs.addTab("Hóspedes", guestView);
         tabs.addTab("Reservas", reservationView);
-        tabs.addTab("Serviços", serviceView);
 
+        // Ao trocar de aba, recarrega os dados (combos e tabelas ficam sempre atualizados)
         Map<JComponent, Runnable> refreshers = new HashMap<>();
         refreshers.put(hotelView, hotelView::refresh);
         refreshers.put(roomView, roomView::refresh);
@@ -36,7 +37,6 @@ public class MainFrame extends JFrame {
         refreshers.put(workShiftView, workShiftView::refresh);
         refreshers.put(guestView, guestView::refresh);
         refreshers.put(reservationView, reservationView::refresh);
-        refreshers.put(serviceView, serviceView::refresh);
 
         tabs.addChangeListener(e -> {
             Runnable refresher = refreshers.get(tabs.getSelectedComponent());

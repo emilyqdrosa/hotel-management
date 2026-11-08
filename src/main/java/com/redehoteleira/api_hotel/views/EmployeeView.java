@@ -415,7 +415,7 @@ public class EmployeeView extends JPanel {
         cbAccessLevel.setSelectedIndex(0);
         cbWorkShift.setSelectedIndex(0);
         cbType.setSelectedIndex(0);
-        cbType.setEnabled(true);
+        cbType.setEnabled(false);
         table.clearSelection();
         updateExtraFields();
         updateFormTitle();
