@@ -70,7 +70,6 @@ public class ReservationController {
         return ResponseEntity.ok(toResponse(reservationService.cancelReservation(id)));
     }
 
-    // Ex.: POST /reservations/{id}/services/LAUNDRY
     @PostMapping("/{id}/services/{serviceType}")
     public ResponseEntity<ReservationResponseDTO> addService(@PathVariable UUID id,
                                                              @PathVariable ServiceType serviceType) {

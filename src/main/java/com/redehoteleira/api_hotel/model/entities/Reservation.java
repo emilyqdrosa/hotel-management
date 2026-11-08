@@ -41,7 +41,6 @@ public class Reservation {
     @Column(nullable = false)
     private ReservationStatus status;
 
-    // Coleção de Enums substituindo a Entidade Service
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "reservation_services",

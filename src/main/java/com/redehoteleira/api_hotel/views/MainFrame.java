@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
         tabs.addTab("Hóspedes", guestView);
         tabs.addTab("Reservas", reservationView);
 
-        // Ao trocar de aba, recarrega os dados (combos e tabelas ficam sempre atualizados)
         Map<JComponent, Runnable> refreshers = new HashMap<>();
         refreshers.put(hotelView, hotelView::refresh);
         refreshers.put(roomView, roomView::refresh);

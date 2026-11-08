@@ -90,7 +90,7 @@ public class HotelView extends JPanel {
 
         table.setRowSorter(sorter);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.removeColumn(table.getColumnModel().getColumn(0)); // esconde a coluna ID
+        table.removeColumn(table.getColumnModel().getColumn(0));
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 fillFormFromSelection();

@@ -91,7 +91,6 @@ public class GuestView extends JPanel {
         buttons.add(btnHistory);
         addRow("", buttons, 5);
 
-        // ---------- Busca ----------
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(new JLabel("Buscar (nome, CPF, e-mail ou telefone):"));
         searchPanel.add(txtSearch);

@@ -30,7 +30,6 @@ public class Administrator extends Employee {
 
     @Override
     public Double calculateBonus() {
-        // Regra de negócio: Administradores ganham um bônus fixo de R$ 1000,00 ou 20% (o que for maior)
         Double percentageBonus = this.getSalary() * 0.20;
         return percentageBonus > 1000.0 ? percentageBonus : 1000.0;
     }

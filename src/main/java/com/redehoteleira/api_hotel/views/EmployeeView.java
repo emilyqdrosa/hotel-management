@@ -113,7 +113,6 @@ public class EmployeeView extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // ---------- Painel de campos extras (por cargo) ----------
         extraPanel.add(new JPanel(), "NONE");
         extraPanel.add(labeled("Idiomas:", txtLanguages), "REC");
         extraPanel.add(labeled("Departamento:", txtDepartment), "MGR");
@@ -173,7 +172,7 @@ public class EmployeeView extends JPanel {
 
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.removeColumn(table.getColumnModel().getColumn(0)); // esconde ID
+        table.removeColumn(table.getColumnModel().getColumn(0));
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 fillFormFromSelection();
@@ -206,8 +205,6 @@ public class EmployeeView extends JPanel {
         gbc.gridx = 1;
         formPanel.add(component, gbc);
     }
-
-    // ---------- Carregamento ----------
 
     public void refresh() {
         loading = true;
@@ -289,8 +286,6 @@ public class EmployeeView extends JPanel {
             showError("Erro ao carregar funcionários: " + ex.getMessage());
         }
     }
-
-    // ---------- Ações ----------
 
     private void save() {
         HotelItem hotel = (HotelItem) cbHotel.getSelectedItem();
@@ -458,12 +453,10 @@ public class EmployeeView extends JPanel {
             cbType.setSelectedIndex(TYPE_EMPLOYEE);
         }
 
-        cbType.setEnabled(false); // o cargo não pode ser alterado na edição
+        cbType.setEnabled(false);
         updateExtraFields();
         updateFormTitle();
     }
-
-    // ---------- Utilitários ----------
 
     private void selectHotel(JComboBox<HotelItem> combo, UUID id) {
         ComboBoxModel<HotelItem> model = combo.getModel();

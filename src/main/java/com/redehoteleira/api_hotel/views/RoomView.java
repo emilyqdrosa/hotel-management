@@ -134,8 +134,8 @@ public class RoomView extends JPanel {
 
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.removeColumn(table.getColumnModel().getColumn(0)); // esconde ID do quarto
-        table.removeColumn(table.getColumnModel().getColumn(0)); // esconde ID do hotel
+        table.removeColumn(table.getColumnModel().getColumn(0));
+        table.removeColumn(table.getColumnModel().getColumn(0));
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 fillFormFromSelection();
